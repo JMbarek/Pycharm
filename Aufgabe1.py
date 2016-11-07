@@ -190,7 +190,6 @@ while foundDifference:
         if ( isinstance( getMatchedWordfromDict( word), str )):
             matchedWord = getMatchedWordfromDict(word)
             positionsToPermute = differencePositionsInStrings(word, matchedWord)
-
             # get the character to swap
             if ( len(positionsToPermute) > 0):
                 s1 = matchedWord[int(positionsToPermute[0])]
