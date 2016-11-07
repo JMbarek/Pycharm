@@ -157,7 +157,6 @@ def differencePositionsInStrings(a, b):
     return [i for i in range(len(a)) if a[i] != b[i]]
 ######################################################################
 ######################################################################
-
 def permuteCharacterInString(s, old, new):
     s = s.replace(old, '#')
     s = s.replace(new, old)
