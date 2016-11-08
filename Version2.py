@@ -120,18 +120,20 @@ print(firstDecryptedVersion);
 
 ###
 #this function count how many letter with same frequency in a Word
-def containTwoLetterSameFrequence(val, sameFrequencyDic):
+def containTwoLetterSameFrequence(word, sameFrequencyDic):
     for key, value in sameFrequencyDic.items():
         c = 0
-        for i in val:
-            if (i in value):
+        y = []
+        for i, content in enumerate(word):
+            if ( content in value):
                 c += 1;
+                y.append(i)
                 if (c>=2):
                     print(i);
         if (c >=2):
             print(value)
-            print("The word "+ val +" qre "+ str(c)+" caracters with same frequency");
-            return c
+            print("The word "+ word +" have "+ str(c)+" caracters with same frequency with Indexes ="+ str(y) );
+            return y
 
 ######################################################################
 def getNumberDifferences(a,b):
@@ -187,13 +189,13 @@ def permuteCharacterInString(s, old, new):
 foundDifference = True
 while foundDifference:
     for word in firstDecryptedVersion.split():
-        if ( isinstance( containTwoLetterSameFrequence( word, sameFrequencyDic), int ) and containTwoLetterSameFrequence(word, sameFrequencyDic) >=2):
-            matchedWord = getMatchedWordfromDict(word)
-            positionsToPermute = differencePositionsInStrings(word, matchedWord)
+        if ( isinstance( containTwoLetterSameFrequence( word, sameFrequencyDic), list )):
+            # matchedWord = getMatchedWordfromDict(word)
+            positionsToPermute = containTwoLetterSameFrequence( word, sameFrequencyDic)
             # get the character to swap
             if ( len(positionsToPermute) > 0):
-                s1 = matchedWord[int(positionsToPermute[0])]
-                s2 = word[int(positionsToPermute[0])]
+                s1 = word[int(positionsToPermute[0])]
+                s2 = word[int(positionsToPermute[1])]
                 # print("swap : " + s1 + " to " + s2)
                 firstDecryptedVersion = permuteCharacterInString(firstDecryptedVersion, s1, s2)
                 foundDifference = True
