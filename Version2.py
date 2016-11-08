@@ -130,9 +130,9 @@ def containTwoLetterSameFrequence(word, sameFrequencyDic):
                 y.append(i)
                 if (c>=2):
                     print(i);
-        if (c >=2):
+        if (c ==2):
             print(value)
-            print("The word "+ word +" have "+ str(c)+" caracters with same frequency with Indexes ="+ str(y) );
+            print("The word "+ word +" have "+ str(c)+" characters with same frequency with Indexes ="+ str(y) );
             return y
 
 ######################################################################
@@ -208,7 +208,7 @@ while foundDifference:
     # elif (isinstance( containTwoLetterSameFrequence( word, sameFrequencyDic), int ) and containTwoLetterSameFrequence(word, sameFrequencyDic) >=2):
     #     secondDecryptedVersion += "2SAME "
 
-        # secondDecryptedVersion += getMatchedWordfromDict(word)+" "
+    # secondDecryptedVersion += getMatchedWordfromDict(word)+" "
 
 
 print("the Plain Text is:");
