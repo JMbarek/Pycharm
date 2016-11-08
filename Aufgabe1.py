@@ -207,6 +207,7 @@ while foundDifference:
 
         # secondDecryptedVersion += getMatchedWordfromDict(word)+" "
 
+
 print("the Plain Text is:");
 print(unencyptedText);
 print("the encrypted Text is:");
