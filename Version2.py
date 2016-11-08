@@ -161,9 +161,9 @@ def differencePositionsInStrings(a, b):
 ######################################################################
 ######################################################################
 def permuteCharacterInString(s, old, new):
-    s = s.replace(old, '#')
+    s = s.replace(old, '-')
     s = s.replace(new, old)
-    s = s.replace('#', new)
+    s = s.replace('-', new)
     return s
 ######################################################################
 ######################################################################
@@ -191,7 +191,7 @@ while foundDifference:
     for word in firstDecryptedVersion.split():
         if ( isinstance( containTwoLetterSameFrequence( word, sameFrequencyDic), list )):
             # matchedWord = getMatchedWordfromDict(word)
-            positionsToPermute = containTwoLetterSameFrequence( word, sameFrequencyDic)
+            positionsToPermute = containTwoLetterSameFrequence(word, sameFrequencyDic)
             # get the character to swap
             if ( len(positionsToPermute) > 0):
                 s1 = word[int(positionsToPermute[0])]

@@ -167,48 +167,6 @@ def getMatchedWordfromDict(word):
         if getNumberDifferences(i ,word)==1:
             return word
 
-#############################################################
-def levenshtein(s1, s2):
-    if len(s1) < len(s2):
-        return levenshtein(s2, s1)
-
-    # len(s1) >= len(s2)
-    if len(s2) == 0:
-        return len(s1)
-
-    previous_row = range(len(s2) + 1)
-    for i, c1 in enumerate(s1):
-        current_row = [i + 1]
-        for j, c2 in enumerate(s2):
-            insertions = previous_row[j + 1] + 1 # j+1 instead of j since previous_row and current_row are one character longer
-            deletions = current_row[j] + 1       # than s2
-            substitutions = previous_row[j] + (c1 != c2)
-            current_row.append(min(insertions, deletions, substitutions))
-        previous_row = current_row
-
-    return previous_row[-1]
-
-def findBestMathWord(original, candidates):
-    # initial bestMatch is the first candidate
-    distance = levenshtein(original, candidates[0])
-    bestMatch = candidates[0]
-    for candidate in candidates:
-        newDistance = levenshtein(original, candidate)
-        #print("newDistance: " + str(newDistance) + " from: " + original + " to: " + candidate)
-        if (newDistance < distance):
-            bestMatch = candidate
-            distance = newDistance
-    #print("bestMatch: " + bestMatch + " (distance : " + str(distance) + " )")
-    return bestMatch
-
-def filterListByLengthOfElements(word):
-    newList=list()
-    with open('Dictionnary.txt') as f:
-        for line in f:
-            if len(line) == len(word) + 1:
-                newList.append(str(line).lower().replace("\n", ""))
-
-    return newList
 ######################################################################
 def differencePositionsInStrings(a, b):
     return [i for i in range(len(a)) if a[i] != b[i]]
@@ -243,16 +201,18 @@ def permuteCharacterInString(s, old, new):
 foundDifference = True
 while foundDifference:
     for word in firstDecryptedVersion.split():
-         if ( isinstance( getMatchedWordfromDict(word), str )):
+        if ( isinstance( getMatchedWordfromDict(word), str )):
+            if( isinstance( containTwoLetterSameFrequence( word, sameFrequencyDic), list )):
+                positionsToPermute1 = containTwoLetterSameFrequence(word, sameFrequencyDic)
+                s1 = word[int(positionsToPermute1[0])]
+                s2 = word[int(positionsToPermute1[1])]
+                # print("swap : " + s1 + " to " + s2)
+                firstDecryptedVersion = permuteCharacterInString(word, s1, s2)
+
+
+
             matchedWord = getMatchedWordfromDict(word)
             positionsToPermute = differencePositionsInStrings(word, matchedWord)
-
-            # sameLengthWords = filterListByLengthOfElements(word)
-            # print(word + ": found words with same length: " + str(sameLengthWords))
-            # print("get best math from list: " + str(sameLengthWords))
-            # matchedWord = findBestMathWord(word, sameLengthWords)
-            # print("bestMatch: " + word + " -> " + matchedWord)
-            # positionsToPermute = differencePositionsInStrings(word, matchedWord)
             # get the character to swap
             if ( len(positionsToPermute) > 0):
                 s1 = matchedWord[int(positionsToPermute[0])]
@@ -260,14 +220,14 @@ while foundDifference:
                 # print("swap : " + s1 + " to " + s2)
                 firstDecryptedVersion = permuteCharacterInString(firstDecryptedVersion, s1, s2)
                 foundDifference = True
-                break
             # break out of the loop and re run the outer loop
-            foundDifference = False
+            break
+        foundDifference = False
 
-        # if (getWordFromDictByLength(len(word), word) == word):
-        #     secondDecryptedVersion += word+" "
-        # elif (isinstance( containTwoLetterSameFrequence( word, sameFrequencyDic), int ) and containTwoLetterSameFrequence(word, sameFrequencyDic) >=2):
-        #     secondDecryptedVersion += "2SAME "
+    # if (getWordFromDictByLength(len(word), word) == word):
+    #     secondDecryptedVersion += word+" "
+    # elif (isinstance( containTwoLetterSameFrequence( word, sameFrequencyDic), int ) and containTwoLetterSameFrequence(word, sameFrequencyDic) >=2):
+    #     secondDecryptedVersion += "2SAME "
 
         # secondDecryptedVersion += getMatchedWordfromDict(word)+" "
 
@@ -287,6 +247,9 @@ print(firstDecryptedVersion);
 
 
 
+
+
+#
 # ######################################################################
 # def sortStringListByLength(myList):
 #     newList = list(myList)
