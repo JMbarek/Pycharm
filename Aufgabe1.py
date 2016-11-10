@@ -1,7 +1,7 @@
-import codecs
-import random
 import operator
+import random
 from collections import defaultdict
+import itertools
 
 abc = [chr(a+97) for a in range(26)]
 # umlaute =['ä','ü','ö',' ','ß']
@@ -171,128 +171,67 @@ def getMatchedWordfromDict(word):
     for i in newList:
         # print(i)
         differencesDic[str(i)].append(getNumberDifferences(i ,word))
-        # if getNumberDifferences(i ,word)==1:
-        #     return word;
     # sort dictionary by value
-    # if len(differencesDic.keys())>=1:
     sorted_differencesDic = sorted(differencesDic.items(), key=operator.itemgetter(1))
     print(sorted_differencesDic)
     l = [str(i[0]) for i in sorted_differencesDic]
     if str(l[0]) != word:
         return str(l[0]);
-        # else: characterToNotpermute + word;
 
-
-
-#############################################################
-def levenshtein(s1, s2):
-    if len(s1) < len(s2):
-        return levenshtein(s2, s1)
-
-    # len(s1) >= len(s2)
-    if len(s2) == 0:
-        return len(s1)
-
-    previous_row = range(len(s2) + 1)
-    for i, c1 in enumerate(s1):
-        current_row = [i + 1]
-        for j, c2 in enumerate(s2):
-            insertions = previous_row[j + 1] + 1 # j+1 instead of j since previous_row and current_row are one character longer
-            deletions = current_row[j] + 1       # than s2
-            substitutions = previous_row[j] + (c1 != c2)
-            current_row.append(min(insertions, deletions, substitutions))
-        previous_row = current_row
-    return previous_row[-1]
-
-def findBestMathWord(original, candidates):
-    # initial bestMatch is the first candidate
-    distance = levenshtein(original, candidates[0])
-    bestMatch = candidates[0]
-    for candidate in candidates:
-        newDistance = levenshtein(original, candidate)
-        #print("newDistance: " + str(newDistance) + " from: " + original + " to: " + candidate)
-        if (newDistance < distance):
-            bestMatch = candidate
-            distance = newDistance
-    #print("bestMatch: " + bestMatch + " (distance : " + str(distance) + " )")
-    return bestMatch
-
-def filterListByLengthOfElements(word):
-    newList=list()
-    with open('Dictionnary.txt') as f:
-        for line in f:
-            if len(line) == len(word) + 1:
-                newList.append(str(line).lower().replace("\n", ""))
-
-    return newList
 ######################################################################
-def differencePositionsInStrings(a, b):
+def differencePositionsIn2Words(a, b):
     return [i for i in range(len(a)) if a[i] != b[i]]
 ######################################################################
+# diese methode ermöglicht den Tausch von characters in einem Text ###
 ######################################################################
-def permuteCharacterInString(s, old, new):
-    s = s.replace(old, '#')
-    s = s.replace(new, old)
-    s = s.replace('#', new)
-    return s
+def permuteCharactersInText(text, cToReplace, cNew):
+    text = text.replace(cToReplace, '_')
+    text = text.replace(cNew, cToReplace)
+    text = text.replace('_', cNew)
+    return text
 ######################################################################
 ######################################################################
 ######################################################################
+### eine liste von allen entdeckten gefunden words  ##################
+wordsToNotpermute = list()
+### entfernen duplizierten charecters in Word  #######################
+def getAllCharectersFromWords():
+   notToPermuteCharecters=""
+   for i in wordsToNotpermute:
+       notToPermuteCharecters+=i
+   return ''.join(ch for ch, _ in itertools.groupby(notToPermuteCharecters))
 ######################################################################
 
-# wordsList = list()
-# wordsList = firstDecryptedVersion.split(' ')
-# print(wordsList);
-#
-#
-# guessedRightWords = list()
-# for i, val in enumerate(wordsList):
-#     if(getWordFromDictByLength(len(val), val) == val):
-#         guessedRightWords.insert(i,val)
-#         print("the word "+ val +" is found");
-#     d = containTwoLetterSameFrequence(val, sameFrequencyDic)
-#     if((val not in guessedRightWords) and ( isinstance( d, int ) and d >=2)):
-#         print("the word " + val +" have "+ str(d) +" letter with same frequency");
-# # sameFrequencyDic
-
-# secondDecryptedVersion=""
-# foundDifference = True
-# while foundDifference:
-#     for word in firstDecryptedVersion.split():
-#         matchedWord = getMatchedWordfromDict(word)
-#         if ( isinstance( matchedWord, str )):
-#             print("for the word: " + word+" ***** matched word ="+ matchedWord)
-#             positionsToPermute = differencePositionsInStrings(word, matchedWord)
-#             # if ( len(positionsToPermute) > 0):
-#             s1 = matchedWord[int(positionsToPermute[0])]
-#             s2 = word[int(positionsToPermute[0])]
-#             # print("swap : " + s1 + " to " + s2)
-#             firstDecryptedVersion = permuteCharacterInString(firstDecryptedVersion, s1, s2)
-#             print(firstDecryptedVersion)
-#             foundDifference = True
-#             # break out of the loop and re run the outer loop
-#             break
-#         foundDifference = False
 
 secondDecryptedVersion = firstDecryptedVersion
 i=1
 while (i<5):
+
+    # erstmal versuchen wir alle entdeckte Worte in einer Liste zu sammelen
+    # und diese worte intakt zu lassen. sogar die Characters in diesem Worte müssen nicht getauscht werden.
     for word in secondDecryptedVersion.split():
         matchedWord = getMatchedWordfromDict(word)
         if not (isinstance(matchedWord, str)):
-            characterToNotpermute += word
+            wordsToNotpermute.append(word)
+
 
     for word in secondDecryptedVersion.split():
+
+        # diese Method sucht alle Worte mit den gleichen und packt sie in einer Liste.
+        # denn, suchen wir in dieser Liste das entsprechende Wort, dieses wort muss ein Kriterium respektieren.
+        # das Kriterium ist so : die 2 Worte müssen die minimale Anzahl von differents Characters haben,
+        #  wenn wir die characters der Worte paarweise vergleichen.
+        # diese Methode nehmt "word" aus dem zuentschlüsselten text
+        # und gibt zurück das entsprechende Wort in dem Fall wo eines gefunden ist  und liefert nix, wenn das wort ist shon entdeckt.
         matchedWord = getMatchedWordfromDict(word)
-        if (isinstance(matchedWord, str)):
-            print("for the word: " + word + " ***** matched word =" + matchedWord)
-            positionsToPermute = differencePositionsInStrings(word, matchedWord)
-            # if ( len(positionsToPermute) > 0):
+        if (isinstance(matchedWord, str) and word not in wordsToNotpermute ):
+            print("for the word : " + word + " ***** matched word =" + matchedWord)
+            positionsToPermute = differencePositionsIn2Words(word, matchedWord)
             s1 = matchedWord[int(positionsToPermute[0])]
             s2 = word[int(positionsToPermute[0])]
-            # print("swap : " + s1 + " to " + s2)
-            if (s2 not in characterToNotpermute):
-                secondDecryptedVersion = permuteCharacterInString(secondDecryptedVersion, s1, s2)                # print(firstDecryptedVersion)
+            if (s2 not in getAllCharectersFromWords()):
+                secondDecryptedVersion = permuteCharactersInText(secondDecryptedVersion, s1, s2)
+                # print(firstDecryptedVersion)
     i+=1
 
 
