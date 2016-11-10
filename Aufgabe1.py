@@ -115,7 +115,7 @@ for c2 in encrytedText:
 
 print(lowerUnencyptedText);
 print(firstDecryptedVersion);
-
+firstOfAlldecryptedText = firstDecryptedVersion;
 ### first comparing with German Dictionnary ###
 
 ###
@@ -154,18 +154,35 @@ def getNumberDifferences(a,b):
     for i, j in u:
         if i != j:
             y.append(j)
-    print('the number of differences', len(y))
+    # print('the number of differences', len(y))
     return len(y)
+
+
+ # list of the character that must be not changed
+characterToNotpermute =""
 
 def getMatchedWordfromDict(word):
     newList = list()
+    differencesDic = defaultdict(list)
     with open('Dictionnary.txt') as f:
         for line in f:
             if len(line) == len(word) + 1:
                 newList.append(str(line).lower().replace("\n", ""))
     for i in newList:
-        if getNumberDifferences(i ,word)==1:
-            return word
+        # print(i)
+        differencesDic[str(i)].append(getNumberDifferences(i ,word))
+        # if getNumberDifferences(i ,word)==1:
+        #     return word;
+    # sort dictionary by value
+    # if len(differencesDic.keys())>=1:
+    sorted_differencesDic = sorted(differencesDic.items(), key=operator.itemgetter(1))
+    print(sorted_differencesDic)
+    l = [str(i[0]) for i in sorted_differencesDic]
+    if str(l[0]) != word:
+        return str(l[0]);
+        # else: characterToNotpermute + word;
+
+
 
 #############################################################
 def levenshtein(s1, s2):
@@ -185,7 +202,6 @@ def levenshtein(s1, s2):
             substitutions = previous_row[j] + (c1 != c2)
             current_row.append(min(insertions, deletions, substitutions))
         previous_row = current_row
-
     return previous_row[-1]
 
 def findBestMathWord(original, candidates):
@@ -240,36 +256,46 @@ def permuteCharacterInString(s, old, new):
 # # sameFrequencyDic
 
 # secondDecryptedVersion=""
-foundDifference = True
-while foundDifference:
-    for word in firstDecryptedVersion.split():
-         if ( isinstance( getMatchedWordfromDict(word), str )):
-            matchedWord = getMatchedWordfromDict(word)
+# foundDifference = True
+# while foundDifference:
+#     for word in firstDecryptedVersion.split():
+#         matchedWord = getMatchedWordfromDict(word)
+#         if ( isinstance( matchedWord, str )):
+#             print("for the word: " + word+" ***** matched word ="+ matchedWord)
+#             positionsToPermute = differencePositionsInStrings(word, matchedWord)
+#             # if ( len(positionsToPermute) > 0):
+#             s1 = matchedWord[int(positionsToPermute[0])]
+#             s2 = word[int(positionsToPermute[0])]
+#             # print("swap : " + s1 + " to " + s2)
+#             firstDecryptedVersion = permuteCharacterInString(firstDecryptedVersion, s1, s2)
+#             print(firstDecryptedVersion)
+#             foundDifference = True
+#             # break out of the loop and re run the outer loop
+#             break
+#         foundDifference = False
+
+secondDecryptedVersion = firstDecryptedVersion
+i=1
+while (i<5):
+    for word in secondDecryptedVersion.split():
+        matchedWord = getMatchedWordfromDict(word)
+        if not (isinstance(matchedWord, str)):
+            characterToNotpermute += word
+
+    for word in secondDecryptedVersion.split():
+        matchedWord = getMatchedWordfromDict(word)
+        if (isinstance(matchedWord, str)):
+            print("for the word: " + word + " ***** matched word =" + matchedWord)
             positionsToPermute = differencePositionsInStrings(word, matchedWord)
+            # if ( len(positionsToPermute) > 0):
+            s1 = matchedWord[int(positionsToPermute[0])]
+            s2 = word[int(positionsToPermute[0])]
+            # print("swap : " + s1 + " to " + s2)
+            if (s2 not in characterToNotpermute):
+                secondDecryptedVersion = permuteCharacterInString(secondDecryptedVersion, s1, s2)                # print(firstDecryptedVersion)
+    i+=1
 
-            # sameLengthWords = filterListByLengthOfElements(word)
-            # print(word + ": found words with same length: " + str(sameLengthWords))
-            # print("get best math from list: " + str(sameLengthWords))
-            # matchedWord = findBestMathWord(word, sameLengthWords)
-            # print("bestMatch: " + word + " -> " + matchedWord)
-            # positionsToPermute = differencePositionsInStrings(word, matchedWord)
-            # get the character to swap
-            if ( len(positionsToPermute) > 0):
-                s1 = matchedWord[int(positionsToPermute[0])]
-                s2 = word[int(positionsToPermute[0])]
-                # print("swap : " + s1 + " to " + s2)
-                firstDecryptedVersion = permuteCharacterInString(firstDecryptedVersion, s1, s2)
-                foundDifference = True
-                break
-            # break out of the loop and re run the outer loop
-            foundDifference = False
 
-        # if (getWordFromDictByLength(len(word), word) == word):
-        #     secondDecryptedVersion += word+" "
-        # elif (isinstance( containTwoLetterSameFrequence( word, sameFrequencyDic), int ) and containTwoLetterSameFrequence(word, sameFrequencyDic) >=2):
-        #     secondDecryptedVersion += "2SAME "
-
-        # secondDecryptedVersion += getMatchedWordfromDict(word)+" "
 
 
 print("the Plain Text is:");
@@ -278,8 +304,9 @@ print("the encrypted Text is:");
 print(encrytedText);
 print("the first decrypted vesion Text is:");
 print(firstDecryptedVersion);
-# print("the second decrypted vesion Text is:");
-# print(secondDecryptedVersion);
+print("the second decrypted vesion Text is:");
+print(secondDecryptedVersion);
+
 
 
 
