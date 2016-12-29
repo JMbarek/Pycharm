@@ -1,0 +1,2 @@
+# Pycharm
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/cf7089eeb763479eaff57f136c6785cf)](https://www.codacy.com/app/mbarek-jawhar_2/Pycharm?utm_source=github.com&utm_medium=referral&utm_content=JoeMbarek/Pycharm&utm_campaign=badger)
